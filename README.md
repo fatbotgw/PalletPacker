@@ -5,8 +5,8 @@ or shipping container.  The pallets are not "a single pallet with many boxes",
 but are stacks of identical pallets.
 
 ## Motivation
-This is my first personal project for [Boot.dev](https://www.boot.dev). I created
-it based on a pain point I experienced at a former employer.
+This is a personal project created for [Boot.dev](https://www.boot.dev). 
+It is based on a pain point I experienced at a former employer.
 
 
 # Quick start
