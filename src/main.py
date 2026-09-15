@@ -1,6 +1,9 @@
-from interface import SettingsPuzzle
-from constants import *  
 from pint import UnitRegistry
+
+from constants import *
+from interface import SettingsPuzzle
+import sys
+
 
 def unit_checker(pallet_units, unitreg):
     if pallet_units == "mm":
@@ -103,11 +106,14 @@ def create_result(pallet, total_pallets, layers, pallets_per_layer,
 
 def get_user_input():
     print("Available containers: CONT_20, CONT_40, CONT_40HC, TRAILER_53, TRAILER_48")
-    container_name = input("Enter container type: ").upper()
+    container_name = input("Enter container type (or Q to quit): ").upper()
     
     if container_name in globals():
         container_dims = globals()[container_name]
         print(f"\tUsing {container_name}: {container_dims}")
+    elif container_name == "Q":
+        print("Exiting program...")
+        sys.exit()
     else:
         print(f"Container '{container_name}' not found! Defaulting to CONT_40")
         container_dims = CONT_40  # Fallback
