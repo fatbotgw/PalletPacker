@@ -1,6 +1,7 @@
-from interface import SettingsPuzzle
-from constants import *  
 from pint import UnitRegistry
+
+from constants import *
+
 
 def unit_checker(pallet_units, unitreg):
     if pallet_units == "mm":
@@ -135,11 +136,6 @@ def get_user_input():
 
 
 def main():
-    # TODO implement a Textual interface (or something else?) to provide a 
-    #       graphical representation of the container loadout
-    # app = SettingsPuzzle()
-    # app.run()
-
     ureg = UnitRegistry()
 
     container_size, pallet_model = get_user_input()
