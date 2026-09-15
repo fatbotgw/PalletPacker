@@ -13,7 +13,6 @@ It is based on a pain point I experienced at a former employer.
 ## Requirements
 * Python >= 3.13
 * uv
-* textual (pulled in by uv)
 * pint (pulled in by uv)
 
 ## Steps
