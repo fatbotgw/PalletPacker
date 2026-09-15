@@ -1,7 +1,7 @@
 [project]
-name = "personal-1"
+name = "PalletPacker"
 version = "0.1.0"
-description = "Add your description here"
+description = "calculate the optimal loading pattern and maximum quantity of pallets that can be loaded into a semi trailer or shipping container"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
