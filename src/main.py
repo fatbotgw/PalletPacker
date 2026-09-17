@@ -76,7 +76,11 @@ def find_all_arrangements(container,pallet, unitreg):
                     'used_width': total_width,
                     'waste_width': waste_width,
                     'pattern': pattern,
-                    'efficiency': (total_width / container_w) * 100
+                    'efficiency': (total_width / container_w) * 100,
+                    'L_col_count': strips_L,
+                    'W_col_count': strips_W,
+                    'L_total_spots': strips_L * orientations[0]['pallets_per_strip'],
+                    'W_total_spots': strips_W * orientations[1]['pallets_per_strip']
                 })
     
     best = max(arrangements, key=lambda x: x['total_pallets'])
@@ -86,11 +90,13 @@ def find_all_arrangements(container,pallet, unitreg):
     # return arrangements
     return create_result(
             pallet, total_pallets, layers, best['total_pallets'], 
-            best['pattern'], best['waste_width'], container, pallet
+            best['pattern'], best['waste_width'], container, pallet,
+            best['L_col_count'], best['W_col_count'], best['L_total_spots'], best['W_total_spots']
         )
 
 def create_result(pallet, total_pallets, layers, pallets_per_layer, 
-                      pattern, waste_width, container, pallet_dims):
+                      pattern, waste_width, container, pallet_dims,
+                      L_col_count, W_col_count, L_total_spots, W_total_spots):
         """Create standardized result dictionary"""
         return {
             'pallet_name': pallet,
@@ -101,6 +107,10 @@ def create_result(pallet, total_pallets, layers, pallets_per_layer,
             'waste_width_mm': waste_width,
             'container_dims': container,
             'pallet_dims': pallet_dims,
+            'L_col_count': int(L_col_count),
+            'W_col_count': int(W_col_count),
+            'L_total_spots': int(L_total_spots),
+            'W_total_spots': int(W_total_spots)
             # 'efficiency_percent': ((container_dims[0] * 1000 - waste_width) / (container_dims[0] * 1000)) * 100 if container_dims[0] > 0 else 0
         }
 
@@ -154,6 +164,11 @@ def main():
 
     print(f"You can fit {arrangements['total_pallets']} total pallets in the container.")
     print(f"You should use the following arrangement: {arrangements['arrangement_pattern']}")
+    print(f"L_col_count: {arrangements['L_col_count']} columns")
+    print(f"L_total_spots: {arrangements['L_total_spots']}")
+    print(f"L_row_count: {arrangements['L_total_spots'] / arrangements['L_col_count']} rows")
+    print(f"W_col_count: {arrangements['W_col_count']} columns")
+    print(f"W_total_spots: {arrangements['W_total_spots']}")
 
 if __name__ == "__main__":
    main()
