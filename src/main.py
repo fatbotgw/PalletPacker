@@ -1,3 +1,6 @@
+from itertools import count
+from operator import countOf
+
 from pint import UnitRegistry
 
 from constants import *
@@ -40,6 +43,8 @@ def find_all_arrangements(container,pallet, unitreg):
 
     
     # Define both orientations as "strips" that run the full length of container
+    # L is intended for the long side to run front-to-back in the trailer
+    # W is intended for the long side to run left-to-right in the trailer
     orientations = [
         {'name': 'L', 'strip_width': p_short, 'pallets_per_strip': container_l // p_long},
         {'name': 'W', 'strip_width': p_long, 'pallets_per_strip': container_l // p_short}
@@ -49,7 +54,7 @@ def find_all_arrangements(container,pallet, unitreg):
     max_strips = {}
     for orient in orientations:
         max_strips[orient['name']] = int(container_w // orient['strip_width'])
-    
+
     # Try every combination of L-strips and W-strips
     for strips_L in range(max_strips['L'] + 1):
         for strips_W in range(max_strips['W'] + 1):
@@ -60,7 +65,7 @@ def find_all_arrangements(container,pallet, unitreg):
             total_width = (strips_L * orientations[0]['strip_width'] + 
                          strips_W * orientations[1]['strip_width'])
             
-            # Only keep arrangements that fit in container
+            # Only keep row arrangements that fit in container width
             if total_width <= container_w:
                 # Calculate total pallets in this arrangement
                 total_pallets = (strips_L * orientations[0]['pallets_per_strip'] + 
@@ -69,6 +74,14 @@ def find_all_arrangements(container,pallet, unitreg):
                 waste_width = container_w - total_width
                 pattern = 'L' * strips_L + 'W' * strips_W # Visual pattern like "LLW"
                 
+                L_row_count = orientations[0]['pallets_per_strip']
+                if countOf(pattern, "L") == 0:
+                    L_row_count = 0
+
+                W_row_count = orientations[1]['pallets_per_strip']
+                if countOf(pattern, "W") == 0:
+                    W_row_count = 0
+
                 arrangements.append({
                     'L_strips': strips_L,
                     'W_strips': strips_W,
@@ -79,8 +92,10 @@ def find_all_arrangements(container,pallet, unitreg):
                     'efficiency': (total_width / container_w) * 100,
                     'L_col_count': strips_L,
                     'W_col_count': strips_W,
-                    'L_total_spots': strips_L * orientations[0]['pallets_per_strip'],
-                    'W_total_spots': strips_W * orientations[1]['pallets_per_strip']
+                    'L_row_count': L_row_count,
+                    'W_row_count': W_row_count,
+                    'L_total_stacks': strips_L * orientations[0]['pallets_per_strip'],
+                    'W_total_stacks': strips_W * orientations[1]['pallets_per_strip']
                 })
     
     best = max(arrangements, key=lambda x: x['total_pallets'])
@@ -91,12 +106,15 @@ def find_all_arrangements(container,pallet, unitreg):
     return create_result(
             pallet, total_pallets, layers, best['total_pallets'], 
             best['pattern'], best['waste_width'], container, pallet,
-            best['L_col_count'], best['W_col_count'], best['L_total_spots'], best['W_total_spots']
+            best['L_col_count'], best['W_col_count'],
+            best['L_row_count'], best['W_row_count'],
+            best['L_total_stacks'], best['W_total_stacks']
         )
 
 def create_result(pallet, total_pallets, layers, pallets_per_layer, 
                       pattern, waste_width, container, pallet_dims,
-                      L_col_count, W_col_count, L_total_spots, W_total_spots):
+                      L_col_count, W_col_count, L_row_count, W_row_count,
+                      L_total_stacks, W_total_stacks):
         """Create standardized result dictionary"""
         return {
             'pallet_name': pallet,
@@ -109,8 +127,10 @@ def create_result(pallet, total_pallets, layers, pallets_per_layer,
             'pallet_dims': pallet_dims,
             'L_col_count': int(L_col_count),
             'W_col_count': int(W_col_count),
-            'L_total_spots': int(L_total_spots),
-            'W_total_spots': int(W_total_spots)
+            'L_row_count': int(L_row_count),
+            'W_row_count': int(W_row_count),
+            'L_total_stacks': int(L_total_stacks),
+            'W_total_stacks': int(W_total_stacks)
             # 'efficiency_percent': ((container_dims[0] * 1000 - waste_width) / (container_dims[0] * 1000)) * 100 if container_dims[0] > 0 else 0
         }
 
@@ -164,11 +184,33 @@ def main():
 
     print(f"You can fit {arrangements['total_pallets']} total pallets in the container.")
     print(f"You should use the following arrangement: {arrangements['arrangement_pattern']}")
+    print(f"The stack height should be {arrangements['layers']} pallets.")
+
     print(f"L_col_count: {arrangements['L_col_count']} columns")
-    print(f"L_total_spots: {arrangements['L_total_spots']}")
-    print(f"L_row_count: {arrangements['L_total_spots'] / arrangements['L_col_count']} rows")
+    print(f"L_total_stacks: {arrangements['L_total_stacks']}")
+    print(f"L_row_count: {arrangements['L_row_count']} rows")
+
     print(f"W_col_count: {arrangements['W_col_count']} columns")
-    print(f"W_total_spots: {arrangements['W_total_spots']}")
+    print(f"W_total_stacks: {arrangements['W_total_stacks']}")
+    print(f"W_row_count: {arrangements['W_row_count']} rows")
+
+    # row_total = L_row_count + W_row_count
+
+    print("-" * 20)
+
+    column_total = arrangements['L_col_count'] + arrangements['W_col_count']
+    row_total = arrangements['L_row_count'] + arrangements['W_row_count']
+    for column in range(column_total):
+        print("|")
+        # for row in range(row_total):
+        for letter in arrangements['arrangement_pattern']:
+            if letter == "L":
+                print("L"*row_total)
+            elif letter == "W":
+                print("W"*row_total)
+
+    print("-"*20)
+
 
 if __name__ == "__main__":
    main()
