@@ -1,3 +1,4 @@
+import sys
 from itertools import count
 from operator import countOf
 
@@ -5,7 +6,6 @@ from pint import UnitRegistry
 
 from constants import *
 from interface import SettingsPuzzle
-import sys
 
 
 def unit_checker(pallet_units, unitreg):
@@ -186,30 +186,27 @@ def main():
     print(f"You should use the following arrangement: {arrangements['arrangement_pattern']}")
     print(f"The stack height should be {arrangements['layers']} pallets.")
 
-    print(f"L_col_count: {arrangements['L_col_count']} columns")
-    print(f"L_total_stacks: {arrangements['L_total_stacks']}")
-    print(f"L_row_count: {arrangements['L_row_count']} rows")
+    print(f"\nLengthwise column count: {arrangements['L_col_count']} columns")
+    print(f"Lengthwise stacks: {arrangements['L_total_stacks']}")
+    print(f"Lengthwise row count: {arrangements['L_row_count']} rows")
 
-    print(f"W_col_count: {arrangements['W_col_count']} columns")
-    print(f"W_total_stacks: {arrangements['W_total_stacks']}")
-    print(f"W_row_count: {arrangements['W_row_count']} rows")
+    print(f"\nWide column count: {arrangements['W_col_count']} columns")
+    print(f"Wide stacks: {arrangements['W_total_stacks']}")
+    print(f"Wide row count: {arrangements['W_row_count']} rows")
 
-    # row_total = L_row_count + W_row_count
+    print("\nPattern layout:")
+    print("||" + "-" * max(arrangements['L_row_count'], arrangements['W_row_count']) * 2)
 
-    print("-" * 20)
+    for letter in arrangements['arrangement_pattern']:
+        if letter == "L":
+            # This text uses braille characters to imply lengthwise vs wide
+            print("||" + "⠛⠛ "* arrangements['L_row_count'])
+        elif letter == "W":
+            print("||" + "⠿ "* arrangements['W_row_count'])
+        else:
+            continue
 
-    column_total = arrangements['L_col_count'] + arrangements['W_col_count']
-    row_total = arrangements['L_row_count'] + arrangements['W_row_count']
-    for column in range(column_total):
-        print("|")
-        # for row in range(row_total):
-        for letter in arrangements['arrangement_pattern']:
-            if letter == "L":
-                print("L"*row_total)
-            elif letter == "W":
-                print("W"*row_total)
-
-    print("-"*20)
+    print("||" + "-" * max(arrangements['L_row_count'], arrangements['W_row_count']) * 2)
 
 
 if __name__ == "__main__":
