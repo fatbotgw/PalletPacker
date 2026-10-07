@@ -1,5 +1,5 @@
 # Pallet Packer
-This purpose of this program is to calculate the optimal loading pattern
+The purpose of this program is to calculate the optimal loading pattern
 and maximum quantity of pallets that can be loaded into a semi trailer
 or shipping container.  The pallets are not "a single pallet with many boxes",
 but are stacks of identical pallets.
